@@ -1,26 +1,26 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'python:3.9'
+        }
+    }
+    environment {
+        FLASK_APP = 'app.py'
+    }
     stages {
-        stage('Clone') {
+        stage('Clone Repo') {
             steps {
-                echo "Cloning the repo..."
-                // If using GitHub, use git URL
-                // git url: 'https://github.com/Sharmeeh/Project1.git'
+                git url: 'https://github.com/Sharmeeh/Project1.git', branch: 'main'
             }
         }
-
-        stage('Install dependencies') {
+        stage('Install Requirements') {
             steps {
-                echo "Installing dependencies..."
                 sh 'pip install -r requirements.txt'
             }
         }
-
-        stage('Run Flask app') {
+        stage('Run App') {
             steps {
-                echo "Starting Flask app..."
-                sh 'nohup python3 app.py &'
+                sh 'python app.py'
             }
         }
     }
