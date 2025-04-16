@@ -1,26 +1,25 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9'
-        }
-    }
-    environment {
-        FLASK_APP = 'app.py'
-    }
+    agent any
+    
+    
     stages {
         stage('Clone Repo') {
             steps {
                 git url: 'https://github.com/Sharmeeh/Project1.git', branch: 'main'
             }
         }
-        stage('Install Requirements') {
+       stage('Build Docker Image') {
             steps {
-                sh 'pip install -r requirements.txt'
+                script {
+                    docker.build('jenkins-demo-image')
+                }
             }
         }
-        stage('Run App') {
+        stage('Run Container') {
             steps {
-                sh 'python app.py'
+                script {
+                    docker.image('jenkins-demo-image').run('-d -p 5000:5000')
+                }
             }
         }
     }
